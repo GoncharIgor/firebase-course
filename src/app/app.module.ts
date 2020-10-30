@@ -73,6 +73,7 @@ import { LoginComponent } from './login/login.component';
         AngularFireModule.initializeApp(environment.firebase),
         AngularFireAuthModule,
         AngularFirestoreModule,
+        // AngularFirestoreModule.enablePersistence(), // activates offline features. Data caches on client side
         AngularFireStorageModule
     ],
     providers: [

@@ -1,7 +1,7 @@
-import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {Course} from "../model/course";
-import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import {CourseDialogComponent} from "../course-dialog/course-dialog.component";
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Course} from '../model/course';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {CourseDialogComponent} from '../course-dialog/course-dialog.component';
 
 @Component({
     selector: 'courses-card-list',
@@ -9,9 +9,8 @@ import {CourseDialogComponent} from "../course-dialog/course-dialog.component";
     styleUrls: ['./courses-card-list.component.css']
 })
 export class CoursesCardListComponent implements OnInit {
-
-    @Input()
-    courses: Course[];
+    @Input() courses: Course[];
+    @Output() courseEdited = new EventEmitter();
 
     constructor(private dialog: MatDialog) {
     }
@@ -20,26 +19,19 @@ export class CoursesCardListComponent implements OnInit {
 
     }
 
-    editCourse(course:Course) {
-
+    editCourse(course: Course) {
         const dialogConfig = new MatDialogConfig();
 
         dialogConfig.disableClose = true;
         dialogConfig.autoFocus = true;
-
         dialogConfig.data = course;
 
-        this.dialog.open(CourseDialogComponent, dialogConfig);
-
+        this.dialog.open(CourseDialogComponent, dialogConfig)
+            .afterClosed()
+            .subscribe(valueFromDialog => {
+                if (valueFromDialog) {
+                    this.courseEdited.emit();
+                }
+            });
     }
-
 }
-
-
-
-
-
-
-
-
-
