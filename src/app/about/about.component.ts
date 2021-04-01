@@ -1,9 +1,19 @@
 import {Component, OnInit} from '@angular/core';
-import 'firebase/firestore';
-import {AngularFirestore} from '@angular/fire/firestore';
 import {of} from 'rxjs';
-import {Course} from '../model/course';
 
+import {AngularFirestore} from '@angular/fire/firestore';
+import {Course} from '../model/course';
+// @angular/fire - official Firebase lib, that uses FB SDK under the hood
+// It uses Observables instead of promises
+
+
+// Nested Collections vs Parent one:
+// If nested Collection can be a part of only 1 document - then nested
+// e.g.: lessons can't belong to different courses, only to 1
+// If lessons would belong to different Courses, then we had to transform it to Parent (1-st level) collection
+
+// ID is fully unique and can be generated on client side without even internet connection (no collision with sequencial IDs)
+// SQL ID has to be sequential, but Firebase - in async and hence fast
 
 @Component({
     selector: 'about',
@@ -14,14 +24,20 @@ export class AboutComponent implements OnInit {
 
     constructor(private db: AngularFirestore) {
         // like websocket - for both below: if data changes on BE - it will be immediately reflected on FE
-        // will return array of courses instances without their IDs (like .data() f())
-        // difference from FirestoreSDK - is live connection with BE
+        // difference from FirestoreSDK promise - is live connection with BE
+        // If data in DB changes - then UI part will be updated automatically
+        // Observable listens all the time and not completes after value received
+
+        // will return array of courses instances data, without their IDs (like .data() f())
         this.db.collection('courses').valueChanges().subscribe(console.log);
 
-        // snapshotChanges - gives the state of whole collection
+        // snapshotChanges - gives the state of whole collection (it has documents ID, not only their data)
+        // it returns array of items each: {type: "added", payload: {…}}
+        // payload has property 'doc' with its data and also ID
         this.db.collection('courses').snapshotChanges().subscribe(console.log);
 
         // stateChanges - the first time if gives the whole collection, but after - only the array of changed items
+        // with snapshotItems type "modified"
         this.db.collection('courses').stateChanges().subscribe(console.log);
     }
 

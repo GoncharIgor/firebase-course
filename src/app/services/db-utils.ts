@@ -1,5 +1,5 @@
 export function convertSnapshotsFromFS<T>(snapshot): T[] {
-    // snapshot - 1 array of items inside:
+    // snapshot - 1 array of ALL items inside:
     // [ 0: {type: "added", payload: {…}}
     // 1: {type: "added", payload: {…}} ]
     return snapshot.map(snap => {

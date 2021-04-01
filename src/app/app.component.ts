@@ -16,7 +16,10 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.angularFireAuth.authState.subscribe(user => console.log(user));
+        this.angularFireAuth.authState.subscribe(user => {
+            console.log('User from App Component: ');
+            console.log(user);
+        });
         this.isLoggedIn$ = this.angularFireAuth.authState.pipe(map(user => !!user));
         this.pictureUrl$ = this.angularFireAuth.authState.pipe(map(user => user?.photoURL));
     }
