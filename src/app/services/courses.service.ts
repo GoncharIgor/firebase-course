@@ -17,6 +17,11 @@ export class CoursesService {
     constructor(private db: AngularFirestore) {
     }
 
+    // In terms of performance, the whole size of DB doesn't matter
+    // Matters only the size of returned result
+
+    // no possibility to make a compound index with 2 calculation types (>, <). One of them (FIRST) has to be a match (==)
+
     loadAllCourses() {
         return this.db.collection('courses', ref => ref
             .orderBy('seqNo'))
@@ -24,7 +29,9 @@ export class CoursesService {
             // .where('seqNo', '==', 2)
             // .where('seqNo', '>', 0)
             // .where('seqNo', '<=', 5)
-            // the same above as:  .startAfter(0).endAt(5)
+            // OR
+            // the same above ('seqNo', '>', 0 && 'seqNo', '<=', 5)
+            // is to use: .startAfter(0).endAt(5)
             .snapshotChanges()
             .pipe(
                 map(snapshot => convertSnapshotsFromFS<Course>(snapshot)),
@@ -63,6 +70,7 @@ export class CoursesService {
 
     saveCourse(courseId: string, changes: Partial<Course>): Observable<any> {
         // update f() returns a promise. With 'from' we convert it to Observable
+        // means: make Observable FROM Promise
         return from(this.db.doc(`courses/${courseId}`).update(changes));
     }
 }

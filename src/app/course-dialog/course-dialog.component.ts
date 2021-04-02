@@ -15,11 +15,11 @@ export class CourseDialogComponent implements OnInit {
     course: Course;
 
     constructor(
-        private fb: FormBuilder,
+        @Inject(MAT_DIALOG_DATA) course: Course,
         private coursesService: CoursesService,
-        private dialogRef: MatDialogRef<CourseDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) course: Course) {
-
+        private fb: FormBuilder,
+        private dialogRef: MatDialogRef<CourseDialogComponent>
+    ) {
         const titles = course.titles;
         this.course = course;
 

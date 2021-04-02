@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+  	function isAuthenticated() {
+    	return request.auth.uid != null;
+    }
+
+    function isKnownUser() {
+    	return isAuthenticated() &&
+      exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isAdmin() {
+    	return isAuthenticated() &&
+      get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    function isNonEmptySting(fieldName) {
+    	return request.resource.data[fieldName] is string
+    	        && request.resource.data[fieldName].size() > 0;
+    }
+
+    function isValidCourse() {
+    	// resource.data - old version of the doc
+      // request.resource.data - new version of the document, but not yet committed to DB
+    	return request.resource.data.seqNo is number
+          	 && request.resource.data.seqNo > 0
+             && isNonEmptySting("url");
+    }
+
+    // we have protected users whitelist collection
+    match /users/{userId} {
+    	allow read, write: if false;
+    }
+
+    match /courses/{curseId} {
+      // only users from whitelist can read
+    	allow read: if isKnownUser();
+    	allow write: if isAdmin() && resource.data.status == 'draft' && isValidCourse() ;
+
+      match /lessons/{lessonId} {
+      	allow read: if isKnownUser();
+        allow write: if isAdmin();
+      }
+
+  	}
+  }
+}

@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Course} from '../model/course';
 import {Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
+
+import {Course} from '../model/course';
 import {CoursesService} from '../services/courses.service';
 
 @Component({
@@ -15,7 +16,6 @@ export class HomeComponent implements OnInit {
     advancedCourses$: Observable<Course[]>;
 
     constructor(private coursesService: CoursesService) {
-
     }
 
     ngOnInit() {
@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
     }
 
     reloadCourses() {
-        // snapshotChanges - gives the state of whole collection
+        // snapshotChanges - gives the state of whole collection, with items both: ID and data
         this.courses$ = this.coursesService.loadAllCourses();
 
         this.beginnerCourses$ = this.courses$.pipe(

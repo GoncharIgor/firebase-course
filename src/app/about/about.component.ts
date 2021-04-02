@@ -42,13 +42,17 @@ export class AboutComponent implements OnInit {
     }
 
     ngOnInit() {
+        // we are not getting document snapshot by db.collection() f(),
+        // but we use db.doc() f()
         const courseRef = this.db.doc('/courses/brqjTmTehvhiHYPYTPC7')
             .snapshotChanges()
             .subscribe(snap => {
                 const course: any = snap.payload.data();
+                // relatedCourseRef - a 2-nd document, that is linked to the current one by special field type: reference
                 console.log('relatedCourseRef: ', course.relatedCourseRef);
             });
 
+        // Creation of reference to a document manually (we link 1 doc to another)
         // document ref works the similar way as foreignKey in SQL DB
         // reference - good way to link 2 DB documents
         const ref = this.db.doc('courses/i7j08O9Ww4rG0Z8y8hJa')
@@ -64,11 +68,12 @@ export class AboutComponent implements OnInit {
 
         const batch = this.db.firestore.batch();
 
+        // batch.set() - replaces the document with a new one. .update() - updates existing doc
         batch.update(ngrxCourseRef, {titles: {description: 'NGRX'}});
         batch.update(serverlessAngularCourseRef, {titles: {description: 'SERVERLESS ANGULAR'}});
 
         const batch$ = of(batch.commit()); // converting promise to Observable
-        batch$.subscribe();
+        batch$.subscribe(); // subscribe() - in order to trigger batch commiyt
 
         // batch limit - 500 operations at once
     }
@@ -76,12 +81,13 @@ export class AboutComponent implements OnInit {
     // we want to lock our unit for modification from outside, until we finish the transaction
     async runTransaction() {
         // always return variables from transaction f(), never modify them inside
+        // value emitted by .runTransaction() f() promise - is the output value of transaction
         const newLessonsCounter = await this.db.firestore.runTransaction(async transaction => {
             console.log('Running transaction');
             const courseReference = this.db.doc('/courses/HW951DlPNqKeYUPSL13Y').ref;
+            // courseReference.get() doesn't lock the document for reading, thus we need to use transaction.get(ref)
 
             const snap = await transaction.get(courseReference);
-
             const course = <Course>snap.data();
 
             // lessonsCount++ is the postfix increment, thus, the increment is handled after the return. return ++lessonsCount is correct
