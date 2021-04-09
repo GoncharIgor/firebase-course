@@ -13,6 +13,31 @@
                   formControlName="longDescription">
         </textarea>
     </mat-form-field>
+
+    <div class="course-image-upload">
+        <span>Course:</span>
+        <!--Event emits each tome when user selects a new file to upload-->
+        <input type="file" (change)="uploadFile($event)">
+
+        <!--percentage - local variable-->
+        <div class="upload-progress" *ngIf="(uploadPercent$ | async) as percentage">
+            Upload Progress:
+            <mat-progress-bar class="progress-bar"
+                              mode="determinate"
+                              [value]="percentage">
+            </mat-progress-bar>
+
+            <span>
+                {{percentage / 100 | percent}}
+            </span>
+        </div>
+
+        <ng-container *ngIf="(downloadUrd$ | async) as imageUrl">
+            <img class="uploaded-image" [src]="imageUrl"/>
+        </ng-container>
+
+    </div>
+
 </mat-dialog-content>
 
 <mat-dialog-actions>

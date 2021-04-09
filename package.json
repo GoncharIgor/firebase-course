@@ -4,9 +4,11 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 4203",
     "init-db": "ts-node -P ./init-db.tsconfig.json ./init-db.ts",
     "build": "ng build",
+    "build:prod": "ng build --prod",
+    "fb:deploy": "firebase deploy",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

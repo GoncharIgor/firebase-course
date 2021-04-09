@@ -38,7 +38,8 @@ service cloud.firestore {
     match /courses/{curseId} {
       // only users from whitelist can read
     	allow read: if isKnownUser();
-    	allow write: if isAdmin() && resource.data.status == 'draft' && isValidCourse() ;
+    	// allow write: if isAdmin() && resource.data.status == 'draft' && isValidCourse() ;
+    	allow write: if isAdmin() && isValidCourse() ;
 
       match /lessons/{lessonId} {
       	allow read: if isKnownUser();

@@ -72,3 +72,13 @@ function isAuthenticated() {
     	return request.auth.uid != null;
 }
 allow read: if isAuthenticated();
+
+
+
+HOSTING:
+{
+        "source": "**",
+        "destination": "/index.html"
+}
+
+means - all the request should be served on index.html page
